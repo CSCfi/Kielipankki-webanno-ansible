@@ -1,0 +1,30 @@
+database.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+database.driver=com.mysql.jdbc.Driver
+database.url=jdbc:mysql://{{ db_server }}:{{ mysql_port }}/{{ db_name }}?serverTimezone=Europe/Helsinki
+database.username={{ db_user }}
+database.password={{ db_password }}
+
+# 60 * 60 * 24 * 30 = 30 days
+backup.keep.time=1000000
+
+# 60 * 5 = 5 minutes
+backup.interval=1000
+
+backup.keep.number=10
+
+ui.brat.sentences.number = 5
+
+
+# authentikaatiosta
+auth.mode=preauth
+auth.preauth.header.principal=remote_user
+auth.preauth.newuser.roles=ROLE_PROJECT_CREATOR
+
+# Settings for proxy:
+server.contextPath=/webanno
+server.use-forward-headers=true
+
+# FIXME: disable CSRF checks (because of proxy)
+wicket.core.csrf.enabled=false
+wicket.core.csrf.no-origin-action=allow
+wicket.core.csrf.conflicting-origin-action=allow

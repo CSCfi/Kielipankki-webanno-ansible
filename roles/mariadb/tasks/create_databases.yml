@@ -1,0 +1,22 @@
+---
+# create databases for wordpress
+
+
+- name: Create database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present 
+    login_user: "root"
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+
+- name: Create database user
+  mysql_user: 
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:SELECT,UPDATE,INSERT,DELETE"
+    state: present 
+    login_user: "root" 
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+

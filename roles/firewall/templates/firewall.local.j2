@@ -1,0 +1,16 @@
+{# generates firewall rules, assumes ""/6  in item #}
+
+# Load new rules by running /etc/rc.d/rc{{ item }}.firewall
+
+# set rules
+{% if item == "" %}
+{% for ip in portal_ips %}
+iptables -I INPUT -s {{ ip }} -p tcp -m tcp --dport 8009 -m comment --comment "Allow AJP from portal" -j ACCEPT
+{% endfor %}
+{% endif %}
+
+# set policies
+ip{{ item }}tables -P INPUT DROP
+ip{{ item }}tables -P FORWARD DROP
+ip{{ item }}tables -P OUTPUT ACCEPT
+

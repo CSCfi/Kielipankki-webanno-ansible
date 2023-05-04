@@ -1,0 +1,29 @@
+---
+# Configure Tomcat
+
+- name: Copy tomcat config file
+  copy:
+    src: files/server.xml
+    dest: "{{ catalina_base }}/conf/server.xml"
+    owner: "{{ remote_deploy_user }}"
+
+- name: Install speedup modules
+  yum:
+    name:
+      - haveged
+      - tomcat-native
+    state: present
+
+- name: Start and enable haveged to speed up tomcat startup time
+  service:
+    name: haveged
+    state: started
+    enabled: yes
+
+- name: Start and enable tomcat
+  service:
+    name: tomcat
+    state: started
+    enabled: yes
+
+

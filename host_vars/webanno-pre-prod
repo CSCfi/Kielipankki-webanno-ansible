@@ -1,0 +1,14 @@
+---
+# Add variables here to overwrite the default ones in 'all'
+# Passwords must be defined here
+
+db_name: 'webanno_db'
+db_user: 'webanno'
+db_install_user: "install_user"
+db_server: 127.0.0.1
+mysql_port: 3306
+
+db_install_password:  "{{ lookup('passwordstore', 'lb_passwords/pouta/webanno_db_install')}}"
+mysql_root_password:  "{{ lookup('passwordstore', 'lb_passwords/pouta/webanno_mysql_root')}}"
+db_password:  "{{ lookup('passwordstore', 'lb_passwords/pouta/webanno_user')}}"
+

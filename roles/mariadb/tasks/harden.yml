@@ -1,0 +1,36 @@
+---
+# harden mariadb installation
+
+
+- name: Set root user password 
+  command: mysqladmin -u root password "{{ mysql_root_password }}" 
+  # if error, the root user has been set already
+  ignore_errors: yes
+
+- name: Create install user 
+  mysql_user:
+    name: "{{ db_install_user }}"
+    password: "{{ db_install_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: '*.*:ALL'
+    state: present
+  no_log: true
+
+- name: Delete anonymous MySQL server user for current hostname
+  mysql_user: 
+    user: ""
+    host: "{{ ansible_hostname }}"
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+
+- name: Remove the test database
+  mysql_db: 
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+

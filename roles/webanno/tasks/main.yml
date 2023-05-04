@@ -1,0 +1,68 @@
+---
+
+- name: Download Webanno
+  get_url:
+    url: https://github.com/webanno/webanno/releases/download/webanno-{{ webanno_revnum }}/webanno-webapp-{{ webanno_revnum }}.war
+    dest: "{{ catalina_base }}/webapps/webanno.war"
+    force: yes
+
+- name: Create home folder for webanno
+  file:
+    path: "{{ webanno_home }}"
+    state: directory
+    owner: tomcat
+
+- name: Create settings file for webanno
+  template:
+    src: settings.properties.j2
+    dest:  "{{ webanno_home }}/settings.properties"
+    owner: tomcat
+
+- name: Add Env variables to tomcat configuration
+  template:
+    src: webanno_setenv.sh
+    dest: "{{ catalina_base }}/bin/setenv.sh"
+    mode: 0755
+    owner: tomcat
+
+- name: Stop tomcat service
+  shell: nohup sudo "{{ catalina_base }}/bin/catalina.sh" stop
+  tags: restore_backup
+
+# A bit cumbersome to get an english day of week
+- name: Get day of week
+  shell: bash -c "LANG=en; date +%a"
+  register: date_output
+  tags: test
+  tags: restore_backup
+
+- name: Set day of week
+  set_fact:
+    dow: "{{ date_output.stdout }}"
+  tags: test
+  tags: restore_backup
+
+- name: Copy backup
+  copy:
+    src: "{{ dow }}-{{ backup_filename }}.gz"
+    dest: "{{ backup_dir }}"
+  tags: restore_backup
+
+- name: Install backup/restore script
+  template:
+    src: backup.j2
+    dest: /usr/local/bin/backup.sh
+    mode: 700
+  tags: restore_backup
+
+- name: Apply backup
+  command: /usr/local/bin/backup.sh restore "{{ db_install_password }}"
+#  no_log: true
+  tags: restore_backup
+
+- name: Start tomcat service
+  shell: nohup sudo "{{ catalina_base }}/bin/catalina.sh" start
+  tags: restore_backup
+
+
+

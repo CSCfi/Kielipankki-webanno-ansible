@@ -1,0 +1,10 @@
+---
+# This playbook will install MariaDB and create db user and give permissions.
+
+
+- include: install.yml
+- include: harden.yml
+- include: create_databases.yml
+
+
+

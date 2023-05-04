@@ -1,0 +1,5 @@
+---
+webanno_home: /srv/webanno
+data_dir: repository
+backup_filename: webanno_backup.tar
+tmp_dir: /var/tmp

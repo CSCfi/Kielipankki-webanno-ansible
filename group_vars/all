@@ -1,0 +1,20 @@
+---
+
+#Tomcat
+tomcat_version: 8.5.23
+tomcat_permissions_production: True
+
+# backup dir
+backup_dir: /var/backup
+
+# Portal variables (define specific group var)
+portal_ips:
+  - 0.0.0.0 # anywhere is ok for testing
+
+# Webanno variables
+webanno_revnum: 3.6.5
+
+# Tomcat root
+catalina_base: /opt/tomcat
+remote_deploy_user: tomcat
+remote_deploy_group: tomcat

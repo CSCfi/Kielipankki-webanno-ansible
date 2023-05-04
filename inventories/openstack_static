@@ -1,0 +1,3 @@
+# Static IP settings for generated CPouta VMs. Needs to be adjusted if the IP pool changes.
+[webanno-pre-prod]
+webanno-pre-prod ansible_host=195.148.31.151 ansible_user=cloud-user

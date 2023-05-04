@@ -1,0 +1,54 @@
+---
+# Install mariadb
+
+- name: Add MariaDB repository
+  yum_repository:
+    name: MariaDB
+    description: MariaDB Database repo
+    baseurl: http://yum.mariadb.org/10.5/centos7-amd64/
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: true
+
+
+- name: Install MariaDB package
+  yum: 
+    name:
+      - MariaDB-server
+      - python-PyMySQL
+#      - python3-libselinux
+#      - python3-libsemanage
+#      - python3-policycoreutils
+    state: present
+
+  # se stuff disabled:
+- name: Configure SELinux to start mysql on any port
+  command: "semanage port -a -t mysqld_port_t -p tcp {{mysql_port}}"
+  ignore_errors: yes # <- ignore errors to be able to run the playbook multiple time
+#  when: false
+
+- name: Allow httpd to connect to database
+  command: setsebool -P httpd_can_network_connect_db on
+  ignore_errors: yes # <- ignore errors to be able to run the playbook multiple times
+#  when: false
+
+- name: Create Mysql configuration file
+  template: 
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+  notify:
+  - restart mariadb
+
+- name: Create MariaDB log file
+  file: 
+    path: /var/log/mysqld.log 
+    state: touch 
+    owner: mysql 
+    group: mysql 
+    mode: 0775
+
+- name: Start MariaDB Service
+  service: 
+    name: mariadb 
+    state: started 
+    enabled: yes
+

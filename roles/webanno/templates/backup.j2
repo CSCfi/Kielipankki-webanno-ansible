@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# This script is partly generated and used to backup/restore servers with database/filesystem data
+
+# exit on first error
+set -o errexit
+
+# General settings
+TMP_DIR="{{ backup_dir }}"
+MODE=$1
+LANG=en
+DOW=`date +%a`
+BACKUP_GROUP="backup"
+
+# Database settings
+DB_HOST="{{ db_server }}"
+DB_PORT="{{ mysql_port }}"
+DB_NAME="{{ db_name }}"
+DB_USER="{{ db_install_user }}"
+DB_BACKUP_FILE=dbdump.sql
+DB_PASSWORD=$2
+
+# Location of local data
+DATA_ROOT="{{ webanno_home }}"
+DATA_DIR="{{ data_dir }}"
+DATA_OWNER="{{ remote_deploy_user }}"
+DATA_GROUP="{{ remote_deploy_group }}"
+DATA_UMASK="u+rwX,g+rwX,o-rwx"
+
+# Name of combined backup
+DATA_BACKUP_TAR=$DOW-"{{ backup_filename }}"
+
+case "$MODE" in
+    
+ backup)
+	#dump to sql file
+	mysqldump --add-drop-table --single-transaction \
+	    -h $DB_HOST -P $DB_PORT -u $DB_USER -p$DB_PASSWORD \
+	    $DB_NAME  > $TMP_DIR/$DB_BACKUP_FILE
+	#add sql to tar
+	tar -C $TMP_DIR --remove-files -c -f $TMP_DIR/$DATA_BACKUP_TAR $DB_BACKUP_FILE
+	#add local data
+        tar -C $DATA_ROOT --append -f $TMP_DIR/$DATA_BACKUP_TAR $DATA_DIR
+	#compress
+        gzip -f $TMP_DIR/$DATA_BACKUP_TAR
+	chgrp $BACKUP_GROUP $TMP_DIR/$DATA_BACKUP_TAR.gz
+	chmod g+r,o-rwx $TMP_DIR/$DATA_BACKUP_TAR.gz
+ ;;
+ restore)
+	tar xOf $TMP_DIR/$DATA_BACKUP_TAR.gz $DB_BACKUP_FILE | mysql -h $DB_HOST -P $DB_PORT -u $DB_USER -p$DB_PASSWORD $DB_NAME
+        tar -C $DATA_ROOT -x -z -f $TMP_DIR/$DATA_BACKUP_TAR.gz $DATA_DIR
+	chown -R $DATA_OWNER:$DATA_GROUP $DATA_ROOT/$DATA_DIR
+	chmod -R $DATA_UMASK $DATA_ROOT/$DATA_DIR
+ ;;
+esac
