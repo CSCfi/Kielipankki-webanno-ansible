@@ -47,7 +47,7 @@
 
     
   roles:
-    - role: ../all/roles/create_instances
+    - role: kielipankki.common.create_instances
       tags: create_instances
 
 - name: Install Portal
@@ -56,9 +56,9 @@
   become: yes  # sudo to root
 
   roles:
-    - role: ../all/roles/backup
+    - role: kielipankki.common.backup
       tags: backup
-    - role: ../all/roles/postfix
+    - role: kielipankki.common.postfix
       tags: postfix
     - role: zaxos.tomcat-ansible-role
       tags: tomcat-install
