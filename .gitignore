@@ -1,0 +1,7 @@
+.venv
+.venv?
+*.sw?
+*~
+
+# Openstack rc files
+project_*-openrc.sh
