@@ -1,1 +1,9 @@
-- zaxos.tomcat-ansible-role
+---
+
+collections:
+  - name: git@github.com:CSCfi/Kielipankki-ansible-common.git
+    type: git
+    version: main
+
+roles:
+  - zaxos.tomcat-ansible-role
