@@ -5,3 +5,7 @@
 
 # Openstack rc files
 project_*-openrc.sh
+
+# Don't commit backup files
+???-kielipankki_portal_backup.tar.gz
+???-webanno_backup.tar.gz
