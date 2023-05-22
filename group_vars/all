@@ -1,4 +1,43 @@
 ---
+pouta_instance_name: 'webanno'
+vm_name_postfix: 'pre-prod'
+std_image: "CentOS-7"
+project_key: "kielipouta"
+project_sg: "webanno-sg"
+project_security_groups: "default,{{ project_sg }}" # don't add spaces here!
+
+servers:
+  - name: "{{ pouta_instance_name }}-{{ vm_name_postfix }}"
+    image: "{{ std_image }}"
+    flavor: standard.small
+    key_name: "{{ project_key }}"
+    security_groups: "{{ project_security_groups }}"
+    meta:
+      group: default
+
+security_group_rules:
+  - name: nagios
+    protocol: tcp
+    port: 5666
+    allowed_ips:
+      - "193.167.254.68/32" #opsview
+
+  - name: tomcat ajp 8009
+    protocol: tcp
+    port: 8009
+    allowed_ips:
+      - "192.168.1.0/24"
+
+  - name: ssh
+    protocol: tcp
+    port: 22
+    allowed_ips:
+      - "193.166.1.0/16" #CSC Office
+      - "193.166.2.0/16" #CSC Office
+      - "193.166.84.0/16" #CSC VPN
+      - "193.166.85.0/16" #CSC VPN
+      - "86.50.31.6/32"  #Korp2
+
 
 #Tomcat
 tomcat_version: 8.5.23
