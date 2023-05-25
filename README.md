@@ -46,3 +46,5 @@ ansible-playbook webannoPouta.yml -i inventories/openstack_static
 ### Move to production
 Login to the "portal-prod" instance and set the webanno internal IP adress in /etc/hppd/conf.d/webanno.conf.
 Change the name of the VM in pouta.csc.fi from *webanno-pre-prod* to *webanno-prod*. This protects the VM from being accidentally overwritten.
+
+It seems there is a problem with the local firewall rules, they are disabled on our present production system --mma 25.5.2023
